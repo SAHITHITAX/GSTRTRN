@@ -69,6 +69,7 @@
             <th>Remarks</th>
             <th>WhatsApp Client</th>
             <th>WhatsApp Assignee</th>
+            <th>Login GST</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -146,6 +147,10 @@ async function fetchData() {
                         <button class="whatsapp-btn" ${assigneeDisabledAttr}>WhatsApp Assignee</button>
                     </a>
                 </td>
+<td>
+    <button class="whatsapp-btn" onclick="loginToGST('${username}', '${password}')">Login GST</button>
+</td>
+
             `;
             tableBody.appendChild(row);
         });
@@ -173,6 +178,20 @@ function sendBulkWhatsApp() {
     });
     phoneNumbers.forEach((link, index) => {
         setTimeout(() => { window.open(link, '_blank'); }, index * 2000);
+    });
+}
+function loginToGST(username, password) {
+    if (!username || !password) {
+        alert("Username or Password is missing!");
+        return;
+    }
+
+    // Copy Username and Password to Clipboard
+    const credentials = `${username}`;
+    navigator.clipboard.writeText(credentials).then(() => {
+               window.open("https://services.gst.gov.in/services/login", "_blank");
+    }).catch(err => {
+        console.error("Failed to copy credentials:", err);
     });
 }
 
