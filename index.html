@@ -52,6 +52,7 @@
 <body>
 
 <h2>GST RETURNS</h2>
+<button class="whatsapp-btn" onclick="fetchData()">Refresh Data</button>
 <button class="whatsapp-btn" onclick="sendBulkWhatsApp()">Send WhatsApp to All</button>
 <p id="refreshMessage">Data refreshed successfully.</p>
 <p id="loading">Fetching data, please wait...</p>
@@ -74,7 +75,7 @@
 </table>
 
 <script>
-const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbz1ElTRxMporK2_6wExxpRsDcEDQZmgaUCUeWrtYd5rM2WoVo8M6YmQwfa4uvdet5lvIg/exec';
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbx-C6lz3HtLMIAjdblUNTGw8XOeFLhLJqfr1vw8XwL4dcI_T2aPb69BiICVeGJGw0bhig/exec';
 
 const assigneePhones = {
     "ABHIGNA": "9182338327",
@@ -102,27 +103,26 @@ async function fetchData() {
 
         data.forEach(person => {
             const name = person.name || '';
-            let mobile = person.mobile || '';
+            const mobile = (person.mobile || "").replace(/\D/g, "");
             const gstin = person.gstin || '';
             const businame = person.businame || '';
             const username = person.username || '';
             const password = person.password || '';
             const remarks = person.remarks || '';
-            mobile = phone.replace(/\D/g, '');
+            const assignPhone = assigneePhones[person.assign] || '';
 
-            let assignPhone = assigneePhones[assign] || '';
             let whatsappClientLink = '#';
             let clientDisabledAttr = 'disabled';
-            if (phone.length >= 10) {
-                const message = encodeURIComponent(`Hi ${name}, Reminder regarding Income Tax Return (ITR) filing and 31-July is the last date, otherwise penalty will be levied.`);
-                whatsappClientLink = `https://wa.me/${phone}?text=${message}`;
+            if (mobile.length >= 10) {
+                const message = encodeURIComponent(`Hi ${name}, Reminder: GST Return filing due soon. Kindly ensure compliance.`);
+                whatsappClientLink = `https://wa.me/${mobile}?text=${message}`;
                 clientDisabledAttr = '';
             }
 
             let whatsappAssigneeLink = '#';
             let assigneeDisabledAttr = 'disabled';
             if (assignPhone.length >= 10) {
-                const message = encodeURIComponent(`Hi ${assign}, Please follow up on the pending work: ${work} for ${name}`);
+                const message = encodeURIComponent(`Reminder: Follow up on pending GST Return for ${name}.`);
                 whatsappAssigneeLink = `https://wa.me/${assignPhone}?text=${message}`;
                 assigneeDisabledAttr = '';
             }
@@ -166,9 +166,9 @@ function sendBulkWhatsApp() {
     const rows = document.querySelectorAll("#dataTable tbody tr");
     let phoneNumbers = [];
     rows.forEach(row => {
-        const phone = row.cells[2].innerText.replace(/\D/g, '');
+        const phone = row.cells[1].innerText.replace(/\D/g, '');
         if (phone.length >= 10) {
-            phoneNumbers.push(`https://wa.me/${phone}?text=${encodeURIComponent('Reminder: Labour Licence renewal due on 31-Dec to avoid penalties.')}`);
+            phoneNumbers.push(`https://wa.me/${phone}?text=${encodeURIComponent('Reminder: GST Return filing is due soon.')}`);
         }
     });
     phoneNumbers.forEach((link, index) => {
@@ -177,7 +177,6 @@ function sendBulkWhatsApp() {
 }
 
 fetchData();
-setInterval(fetchData, 60000);
 </script>
 
 </body>
